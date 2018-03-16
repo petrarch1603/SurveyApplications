@@ -3,15 +3,19 @@ import json
 from secrets import *
 from urllib.request import urlopen
 
+# This script uses the HERE API to get isolines.
+# To use, you mus have an app code and an app ID. Get them here:
+# https://developer.here.com/documentation/routing/topics/transport-modes.html?create=Evaluation&keepState=true&step=account
+# More information about parameters here:
+# https://developer.here.com/documentation/routing/topics/resource-calculate-isoline.html
+
 locations = {}  # This is a key:value dictionary, key is place-name, value is coordinates
 durations = [15, 30, 45]  # In minutes
-travelModes = ["car"]
+travelModes = ["car"]  # Documentation here https://developer.here.com/documentation/routing/topics/transport-modes.html
 timestamp = "now"
 
 appcode = here_app_code
 appID = here_app_id
-timestamp = "2017-12-03T16:00:00"
-# coordinates = "52.471868,-1.897253"
 
 
 for location in locations:
