@@ -4,8 +4,9 @@ from secrets import *
 from urllib.request import urlopen
 
 # This script uses the HERE API to get isolines.
-# To use, you mus have an app code and an app ID. Get them here:
+# To use, you must have an app code and an app ID. Get them here:
 # https://developer.here.com/documentation/routing/topics/transport-modes.html?create=Evaluation&keepState=true&step=account
+
 # More information about parameters here:
 # https://developer.here.com/documentation/routing/topics/resource-calculate-isoline.html
 
