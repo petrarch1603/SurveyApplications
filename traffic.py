@@ -37,7 +37,7 @@ for location in locations:
             for polygon in reversed(data['response']['isoline']):
                     innerPolygon = []
                     for ind in range(0, len(polygon['component'][0]['shape'])):
-                        if ind%2 == 1:
+                        if ind % 2 == 1:
                             innerPolygon.append((polygon['component'][0]['shape'][ind], polygon['component'][0]['shape'][ind-1]))
 
             outerPolygon = []
