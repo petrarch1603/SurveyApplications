@@ -10,7 +10,7 @@ from urllib.request import urlopen
 # More information about parameters here:
 # https://developer.here.com/documentation/routing/topics/resource-calculate-isoline.html
 
-locations = {}  # This is a key:value dictionary, key is place-name, value is coordinates
+locations = {"Kansas": "39.224187,-98.542109"}  # This is a key:value dictionary, key is place-name, value is coordinates
 durations = [15, 30, 45]  # In minutes
 travelModes = ["car"]  # Documentation here https://developer.here.com/documentation/routing/topics/transport-modes.html
 timestamp = "now"
