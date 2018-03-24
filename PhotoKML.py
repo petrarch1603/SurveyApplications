@@ -1,12 +1,25 @@
+import datetime
 import PIL.Image, PIL.ExifTags
-import sys
+import shutil
 import xml.dom.minidom
 import os
 
 dir = "photos/"
+now = datetime.datetime.now()
+today = now.strftime("%Y%m%d")
 
 
-# exif_data = img._getexif()
+def make_KMZ_dir(new_kml_dir):
+    today_dir = today
+    os.makedirs(today_dir)
+    os.makedirs(today_dir + "/files")
+    src_files = os.listdir(dir)
+    for file_name in src_files:
+        full_file_name = os.path.join(dir, file_name)
+        if os.path.isfile(full_file_name):
+            shutil.copy(full_file_name, today_dir + "/files")
+    shutil.move(os.path.join(os.getcwd(), new_kml_dir), today_dir)
+    return today_dir
 
 
 
@@ -192,8 +205,17 @@ def process_photo(file):
         # cases: image don't have getexif
         pass
 
+
 def main(dir):
-     CreateKmlFile(dir, new_kml_name='dummy.kml')
+    new_kml_name = (today + '.kml')
+    today_dir = make_KMZ_dir(today)
+    home_dir = os.getcwd()
+    os.chdir(today_dir)
+    CreateKmlFile('files/', new_kml_name=new_kml_name)
+    os.chdir(home_dir)
+    #shutil.move(src=os.getcwd()+ '/' + new_kml_name, dst=today_dir)
+    shutil.make_archive(base_name=(today + '.kmz'), format='zip', root_dir=today_dir)
+    os.rename(today + '.kmz.zip', today + '.kmz')
 
 main(dir)
 #print(get_raw_gps_data(file))
