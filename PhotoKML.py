@@ -1,8 +1,10 @@
 import PIL.Image, PIL.ExifTags
 import sys
 import xml.dom.minidom
+import os
 
-file = "photos/IMG_0707.JPG"
+dir = "photos/"
+
 
 # exif_data = img._getexif()
 
@@ -80,19 +82,19 @@ def create_kml_doc():
     return kml_doc
 
 
-def photo_overlay(kml_doc, clean_gps, image_name):
+def photo_overlay(kml_doc, clean_gps, photofilepath):
     po = kml_doc.createElement('PhotoOverlay')
     name = kml_doc.createElement('name')
-    name.appendChild(kml_doc.createTextNode(image_name))
+    name.appendChild(kml_doc.createTextNode(photofilepath))
     description = kml_doc.createElement('description')
     description.appendChild(kml_doc.createCDATASection('<a href="#%s">'
                                                        'Click here to fly into '
-                                                       'photo</a>' % image_name))
+                                                       'photo</a>' % photofilepath))
     po.appendChild(name)
     po.appendChild(description)
     icon = kml_doc.createElement('Icon')
     href = kml_doc.createElement('href')
-    href.appendChild(kml_doc.createTextNode(image_name))
+    href.appendChild(kml_doc.createTextNode(photofilepath))
     camera = kml_doc.createElement('Camera')
     longitude = kml_doc.createElement('longitude')
     latitude = kml_doc.createElement('latitude')
@@ -101,14 +103,19 @@ def photo_overlay(kml_doc, clean_gps, image_name):
     heading = kml_doc.createElement('heading')
 
     # Set the Field of View
-    width = get_exif_data(file)['ExifImageWidth']
-    length = get_exif_data(file)['ExifImageHeight']
+    width = get_exif_data(photofilepath)['ExifImageWidth']
+    length = get_exif_data(photofilepath)['ExifImageHeight']
     # The following might seem counter-intuitive.
     # If the photo has been rotated, we need to switch the height and width
     # Otherwise Google Earth will stretch the image as if it is still in the landscape mode.
-    if clean_gps['Orientation'] == 6 or 8:
-        width = get_exif_data(file)['ExifImageHeight']
-        length = get_exif_data(file)['ExifImageWidth']
+    orient = clean_gps['Orientation']
+    print(orient)
+    if orient in (6, 8):
+        width = get_exif_data(photofilepath)['ExifImageHeight']
+        length = get_exif_data(photofilepath)['ExifImageWidth']
+    else:
+        width = get_exif_data(photofilepath)['ExifImageWidth']
+        length = get_exif_data(photofilepath)['ExifImageHeight']
     lf = str(width / length * -20.0)
     rf = str(width / length * 20.0)
 
@@ -152,10 +159,15 @@ def photo_overlay(kml_doc, clean_gps, image_name):
     document = kml_doc.getElementsByTagName('Document')[0]
     document.appendChild(po)
 
-def CreateKmlFile(file, new_kml_name):
+
+def CreateKmlFile(dir, new_kml_name):
     kml_doc = create_kml_doc()
-    clean_gps = get_gps_data(file)
-    photo_overlay(kml_doc, clean_gps, file)
+    for photofile in os.listdir(dir):
+        if not photofile.startswith('.'):
+            photofilepath = (dir + photofile)
+            process_photo(photofilepath)
+            clean_gps = get_gps_data(photofilepath)
+            photo_overlay(kml_doc, clean_gps, photofilepath)
     kml_file = open(new_kml_name, 'w')
     kml_file.write(kml_doc.toprettyxml())
 
@@ -180,11 +192,10 @@ def process_photo(file):
         # cases: image don't have getexif
         pass
 
-def main(file):
-    process_photo(file)
-    CreateKmlFile(file, new_kml_name='dummy.kml')
+def main(dir):
+     CreateKmlFile(dir, new_kml_name='dummy.kml')
 
-main(file)
+main(dir)
 #print(get_raw_gps_data(file))
 #x = get_exif_data(file)
 #print(x['Orientation'])
