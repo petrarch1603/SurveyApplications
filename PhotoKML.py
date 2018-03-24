@@ -19,7 +19,8 @@ def get_exif_data(file):
 
 def get_raw_gps_data(file):
     raw_exif = get_exif_data(file)
-    rawgpsdata = {}
+    orientation = raw_exif['Orientation']
+    rawgpsdata = {"Orientation": orientation}
     for key in raw_exif['GPSInfo'].keys():
         decode = PIL.ExifTags.GPSTAGS.get(key, key)
         rawgpsdata[decode] = raw_exif['GPSInfo'][key]
@@ -45,6 +46,7 @@ def get_gps_data(file):
     rawgpsdata = get_raw_gps_data(file)
     rawLat = convert_to_degrees(value=rawgpsdata['GPSLatitude'])
     rawLong = convert_to_degrees(value=rawgpsdata['GPSLongitude'])
+    orientation = rawgpsdata['Orientation']
     try:
         altitude = rawgpsdata['GPSAltitude'][0] / rawgpsdata['GPSAltitude'][1]
     except KeyError:
@@ -63,7 +65,8 @@ def get_gps_data(file):
         "Longitude": Long,
         "Latitude": Lat,
         "Altitude": altitude,
-        "Direction": direction
+        "Direction": direction,
+        "Orientation": orientation
     }
     return clean_gps
 
@@ -100,6 +103,12 @@ def photo_overlay(kml_doc, clean_gps, image_name):
     # Set the Field of View
     width = get_exif_data(file)['ExifImageWidth']
     length = get_exif_data(file)['ExifImageHeight']
+    # The following might seem counter-intuitive.
+    # If the photo has been rotated, we need to switch the height and width
+    # Otherwise Google Earth will stretch the image as if it is still in the landscape mode.
+    if clean_gps['Orientation'] == 6 or 8:
+        width = get_exif_data(file)['ExifImageHeight']
+        length = get_exif_data(file)['ExifImageWidth']
     lf = str(width / length * -20.0)
     rf = str(width / length * 20.0)
 
@@ -177,4 +186,6 @@ def main(file):
 
 main(file)
 #print(get_raw_gps_data(file))
+#x = get_exif_data(file)
+#print(x['Orientation'])
 
