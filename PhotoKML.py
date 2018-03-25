@@ -1,3 +1,5 @@
+__author__ = 'petrach1603@gmail.com (Patrick McGranaghan)'
+
 import datetime
 import os
 import PIL.Image, PIL.ExifTags
