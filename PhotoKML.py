@@ -2,7 +2,8 @@ __author__ = 'petrach1603@gmail.com (Patrick McGranaghan)'
 
 import datetime
 import os
-import PIL.Image, PIL.ExifTags
+import PIL.ExifTags
+import PIL.Image
 import shutil
 import xml.dom.minidom
 
@@ -185,17 +186,17 @@ def photo_overlay(kml_doc, clean_gps, photo_file_path):
     document.appendChild(po)
 
 
-def Create_Kml_File(dir, new_kml_name):
+def Create_Kml_File(dir_arg, new_kml_name):
     kml_doc = create_kml_doc()
-    for photo_file in os.listdir(dir):
+    for photo_file in os.listdir(dir_arg):
         if not photo_file.startswith('.'):
-            photo_file_path = (dir + photo_file)
+            photo_file_path = (dir_arg + photo_file)
             process_photo(photo_file_path)
             clean_gps = get_gps_data(photo_file_path)
             photo_overlay(kml_doc, clean_gps, photo_file_path)
-    kml_file = open(new_kml_name, 'w')
-    kml_file.write(kml_doc.toprettyxml())
-    print(kml_doc.toprettyxml())
+    with open(new_kml_name, 'w') as kml_file:
+        kml_file.write(kml_doc.toprettyxml())
+        print(kml_doc.toprettyxml())
 
 
 def process_photo(file):
@@ -212,11 +213,10 @@ def process_photo(file):
             image = image.rotate(270, expand=True)
         elif exif[orientation] == 8:
             image = image.rotate(90, expand=True)
-        exifinfo = image.info['exif']
-        image.save(file, exif=exifinfo)
+        exif_info = image.info['exif']
+        image.save(file, exif=exif_info)
         image.close()
     except (AttributeError, KeyError, IndexError):
-        # cases: image don't have getexif
         pass
 
 
