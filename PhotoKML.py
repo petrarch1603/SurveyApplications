@@ -4,7 +4,7 @@ import PIL.Image, PIL.ExifTags
 import shutil
 import xml.dom.minidom
 
-dir = "photos/"
+target_dir = "photos/"
 now = datetime.datetime.now()
 today = now.strftime("%Y%m%d")
 
@@ -13,9 +13,9 @@ def make_KMZ_dir(new_kml_dir):
     today_dir = today
     os.makedirs(today_dir)
     os.makedirs(today_dir + "/files")
-    src_files = os.listdir(dir)
+    src_files = os.listdir(target_dir)
     for file_name in src_files:
-        full_file_name = os.path.join(dir, file_name)
+        full_file_name = os.path.join(target_dir, file_name)
         if os.path.isfile(full_file_name):
             shutil.copy(full_file_name, today_dir + "/files")
     shutil.move(os.path.join(os.getcwd(), new_kml_dir), today_dir)
@@ -218,7 +218,7 @@ def process_photo(file):
         pass
 
 
-def main(dir):
+def main():
     new_kml_name = (today + '.kml')
     today_dir = make_KMZ_dir(today)
     home_dir = os.getcwd()
@@ -229,4 +229,7 @@ def main(dir):
     os.rename(today + '.kmz.zip', today + '.kmz')
     shutil.rmtree(today_dir)
 
-main(dir)
+
+if __name__ == '__main__':
+    main()
+
