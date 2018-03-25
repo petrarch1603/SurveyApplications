@@ -122,7 +122,6 @@ def photo_overlay(kml_doc, clean_gps, photofilepath):
     # If the photo has been rotated, we need to switch the height and width
     # Otherwise Google Earth will stretch the image as if it is still in the landscape mode.
     orient = clean_gps['Orientation']
-    print(orient)
     if orient in (6, 8):
         width = get_exif_data(photofilepath)['ExifImageHeight']
         length = get_exif_data(photofilepath)['ExifImageWidth']
@@ -159,10 +158,21 @@ def photo_overlay(kml_doc, clean_gps, photofilepath):
     viewvolume.appendChild(bottomfov)
     viewvolume.appendChild(topfov)
     viewvolume.appendChild(near)
+    style = kml_doc.createElement('Style')
+    iconstyle = kml_doc.createElement('IconStyle')
+    # The following are elements for the style only.
+    # Hence the names with '2' to avoid a conflict with other elements with the same name in the DOM
+    icon2 = kml_doc.createElement('Icon')
+    href2 = kml_doc.createElement('href')
+    href2.appendChild(kml_doc.createTextNode('http://maps.google.com/mapfiles/kml/shapes/camera.png'))
+    style.appendChild(iconstyle)
+    iconstyle.appendChild(icon2)
+    icon2.appendChild(href2)
+    po.appendChild(style)
     po.appendChild(camera)
     po.appendChild(icon)
     po.appendChild(viewvolume)
-    point = kml_doc.createElement('point')
+    point = kml_doc.createElement('Point')
     coordinates = kml_doc.createElement('coordinates')
     coordinates.appendChild(kml_doc.createTextNode('%s,%s,%s' % (clean_gps['Longitude'],
                                                                  clean_gps['Latitude'],
@@ -183,6 +193,7 @@ def CreateKmlFile(dir, new_kml_name):
             photo_overlay(kml_doc, clean_gps, photofilepath)
     kml_file = open(new_kml_name, 'w')
     kml_file.write(kml_doc.toprettyxml())
+    print(kml_doc.toprettyxml())
 
 def process_photo(file):
     try:
@@ -213,9 +224,9 @@ def main(dir):
     os.chdir(today_dir)
     CreateKmlFile('files/', new_kml_name=new_kml_name)
     os.chdir(home_dir)
-    #shutil.move(src=os.getcwd()+ '/' + new_kml_name, dst=today_dir)
     shutil.make_archive(base_name=(today + '.kmz'), format='zip', root_dir=today_dir)
     os.rename(today + '.kmz.zip', today + '.kmz')
+    shutil.rmtree(today_dir)
 
 main(dir)
 #print(get_raw_gps_data(file))
