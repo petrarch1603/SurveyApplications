@@ -25,12 +25,12 @@ def make_KMZ_dir(new_kml_dir):
 
 
 def get_exif_data(file):
-    img = PIL.Image.open(file)
-    exif = {
-        PIL.ExifTags.TAGS[k]: v
-        for k, v in img._getexif().items()
-        if k in PIL.ExifTags.TAGS
-    }
+    with PIL.Image.open(file) as img:
+        exif = {
+            PIL.ExifTags.TAGS[k]: v
+            for k, v in img._getexif().items()
+            if k in PIL.ExifTags.TAGS
+        }
     return exif
 
 
