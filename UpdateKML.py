@@ -5,8 +5,11 @@ import openpyxl
 import xml.etree.ElementTree as et
 from zipfile import ZipFile
 
+# This is a script for taking the status of rows on a tracking spreadsheet and updating a KML based on
+# the fields in that tracking spreadsheet.
+
 # Initialize Variables
-mykmz = 'map.kmz'
+mykmz = 'source_data/map.kmz'
 myxlsx = 'source_data/tracking.xlsx'
 
 # TODO Receive emails on Raspberry PI with attachments and process them with this program
