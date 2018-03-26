@@ -7,7 +7,7 @@ from zipfile import ZipFile
 
 # Initialize Variables
 mykmz = 'map.kmz'
-myxlsx = 'tracking.xlsx'
+myxlsx = 'source_data/tracking.xlsx'
 
 # TODO Receive emails on Raspberry PI with attachments and process them with this program
 
@@ -16,7 +16,6 @@ wb = openpyxl.load_workbook(myxlsx)
 
 
 # Create a dictionary with all the relevant spreadsheet data
-
 sheet = wb.sheetnames[0]
 sheet = wb[sheet]
 
